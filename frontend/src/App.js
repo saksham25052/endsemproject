@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+/*import logo from './logo.svg';
 import './App.css';
 
 function App() {
@@ -19,6 +19,24 @@ function App() {
         </a>
       </header>
     </div>
+  );
+}
+
+export default App;*/
+// frontend/src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './Login';
+import Register from './Register';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
 
