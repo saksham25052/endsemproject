@@ -1,6 +1,6 @@
 // backend/routes/userRoutes.js
 const express = require('express');
-const User = require('C:/Users/Saksham/Desktop/SXC Event Ticketing Project/backend/models/User');
+const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
