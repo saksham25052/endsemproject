@@ -12,7 +12,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:5000/api/users/register', { username, email, password });
+      await axios.post('http://localhost:3000/api/users/register', { username, email, password });
       // Redirect to login page or show a success message
     } catch (err) {
       setError(err.response.data.message);
