@@ -3,6 +3,8 @@ const express = require('express');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
+const { generateVerificationCode } = require('../library/mail');
+const VerificationToken = require('../models/verificationToken');
 
 // Register new user
 router.post('/register', async (req, res) => {
@@ -15,10 +17,23 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const user = new User({ username, email, password });
+    const user = new User({
+         username, 
+         email, 
+         password }
+    );
+    const verificationCode = generateVerificationCode();
+    const verificationToken = new VerificationToken({
+        owner: user._id, 
+        token: verificationCode });
+        
+    await verificationToken.save();
     await user.save();
+
+   
     res.status(201).json({ message: 'User created' });
   } catch (err) {
+    console.error('Server error:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
