@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Mail, Lock, Ticket } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState({});
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -26,7 +26,7 @@ const Login = () => {
       newErrors.password = 'Password is required';
     }
 
-    setErrors(newErrors);
+    setError(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -38,8 +38,7 @@ const Login = () => {
     try {
       const { data } = await axios.post('http://localhost:3000/api/users/login', { email, password });
       localStorage.setItem('authToken', data.token);
-      setSuccessMessage('Login successful! Redirecting...');
-      setErrors({});
+      setError({});
       
       // Redirect after 2 seconds
       setTimeout(() => {
@@ -47,53 +46,109 @@ const Login = () => {
       }, 2000);
       
     } catch (err) {
-      setErrors({ submit: err.response?.data?.message || 'Login failed' });
+      setError({ submit: err.response?.data?.message || 'Login failed' });
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">Login</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Login Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          {/* Logo and Title */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
+              <Ticket className="w-8 h-8 text-indigo-600" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">Welcome to TicketHub</h1>
+            <p className="text-gray-600 mt-2">Sign in to your account</p>
           </div>
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-          >
-            Login
-          </button>
-          {errors.submit && <p className="text-red-500 text-center">{errors.submit}</p>}
-        </form>
-        
-        {/* Add success message */}
-        {successMessage && (
-          <div className="mt-4 p-3 bg-green-100 text-green-700 rounded-lg text-center animate-fade-out">
-            {successMessage}
-          </div>
-        )}
+
+          {/* Login Form */}
+          <form onSubmit={handleLogin} className="space-y-6">
+            {/* Email Input */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Remember Me and Forgot Password */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                  Remember me
+                </label>
+              </div>
+              <a href="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                Forgot password?
+              </a>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors font-medium"
+            >
+              Sign In
+            </button>
+            {Object.keys(error).map((key) => (
+            <p key={key} className="text-red-500 text-center">{error[key]}</p>
+          ))}
+
+
+            {/* Sign Up Link */}
+            <div className="text-center text-sm">
+              <span className="text-gray-600">Don't have an account? </span>
+              <a href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+                Sign up
+              </a>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default Login;

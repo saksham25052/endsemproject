@@ -34,5 +34,5 @@ verificationTokenSchema.methods.matchToken = async function(token) {
   return await bcrypt.compare(token, this.token);
 };
 
-module.exports = mongoose.model('VerificationToken', verificationTokenSchema);
+module.exports = mongoose.model('verificationToken', verificationTokenSchema);
 

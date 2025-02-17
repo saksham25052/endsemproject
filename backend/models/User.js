@@ -1,6 +1,10 @@
 // backend/models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+// const verificationToken = require('./verificationToken');
+//const {sendError} = require('../library/errorHandler');
+
+
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -20,6 +24,10 @@ const userSchema = new mongoose.Schema({
     default: 'user',
     type: String,
     required: true,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
   },
   Timestamp: {
     type: Date,
@@ -42,3 +50,4 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
+
