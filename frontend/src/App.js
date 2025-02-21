@@ -4,6 +4,7 @@ import Login from './Login';
 import Register from './Register';
 import Dashboard from './Dashboard';
 import VerifyUser from './VerifyUser';
+import CreateEvent from './CreateEvent';
 
 function App() {
   //const role = localStorage.getItem('role');
@@ -14,6 +15,8 @@ function App() {
         <Route path="/Register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/verify" element={<VerifyUser />} />
+        <Route path="/create" element={<CreateEvent />} /> 
+
 
       </Routes>
     </Router>

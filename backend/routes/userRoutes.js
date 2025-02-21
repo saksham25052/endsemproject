@@ -6,6 +6,8 @@ const router = express.Router();
 const { generateVerificationCode, mailTransport } = require('../library/mail');
 const { isValidObjectId } = require('mongoose');
 const verification = require('../models/verificationToken');
+const { getUserProfile, updateUserProfile } = require('../controllers/user');
+const authLib = require('../library/authLib');
 
 // Register new user
 router.post('/register', async (req, res) => {
@@ -117,5 +119,9 @@ router.post('/verify', async (req, res) => {
   }
  
 });
+
+//to fetch user data
+router.get('/profile', authLib, getUserProfile);
+router.put('/profile', authLib, updateUserProfile);
 
 module.exports = router;

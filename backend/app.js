@@ -20,7 +20,10 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
-app.use('/api/users', userRoutes);
+const eventRoutes = require('./routes/eventRoutes');
+app.use('/api/users', userRoutes); // Use the user route
+app.use('/api/events', eventRoutes); //Use events route
+
 
 // Start server
 const PORT = process.env.PORT || 3000;
