@@ -7,7 +7,7 @@ const { generateVerificationCode, mailTransport } = require('../library/mail');
 const { isValidObjectId } = require('mongoose');
 const verification = require('../models/verificationToken');
 const { getUserProfile, updateUserProfile } = require('../controllers/user');
-const authLib = require('../library/authLib');
+const authLib = require('../library/authLib.js');
 
 // Register new user
 router.post('/register', async (req, res) => {

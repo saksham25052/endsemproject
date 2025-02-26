@@ -4,16 +4,17 @@ const Event = require('../models/events'); // Import the Event model
 
 // POST route to create a new event
 router.post('/create', async (req, res) => {
-  const { title, description, date, time, venue, price, totalTickets } = req.body;
+  const { userId, title, description, date, time, venue, price, totalTickets } = req.body;
 
   // Validation - Check if required fields are provided
-  if (!title || !description || !date || !time || !venue || !price || !totalTickets) {
+  if (!userId || !title || !description || !date || !time || !venue || !price || !totalTickets) {
     return res.status(400).json({ message: 'Please fill in all the required fields.' });
   }
 
   try {
     // Create a new event object
     const newEvent = new Event({
+      userId, // The user ID is obtained from the auth middleware
       title,
       description,
       date,

@@ -5,21 +5,57 @@ import Register from './Register';
 import Dashboard from './Dashboard';
 import VerifyUser from './VerifyUser';
 import CreateEvent from './CreateEvent';
+import PrivateRoute from './PrivateRoute';
+import { LogOut } from 'lucide-react';
+import LogoutComponent from './LogoutComponent';
 
 function App() {
-  //const role = localStorage.getItem('role');
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/Register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<VerifyUser />} />
-        <Route path="/create" element={<CreateEvent />} /> 
+        
+        {/* Protected Routes */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/create" 
+          element={
+            <PrivateRoute>
+              <CreateEvent />
+            </PrivateRoute>
+          } 
+        />
 
+        {/* Redirect root to dashboard */}
+        <Route 
+          path="/" 
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/logout" 
+          element={
+            <PrivateRoute>
+              <LogoutComponent/>
+            </PrivateRoute>
+          } 
+        />
 
       </Routes>
     </Router>
+
   );
 }
 

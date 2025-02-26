@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { 
   Calendar, 
   Ticket, 
@@ -11,10 +12,37 @@ import {
   LogOut,
   Menu
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 
 function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get('http://localhost:3000/api/users/profile', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log('API Response:', response.data); // Debug response
+        setUserData(response.data);
+        localStorage.setItem('userData', JSON.stringify(response.data));
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error details:', error); // Debug error
+        setError(error.response?.data?.message || 'Failed to fetch user data');
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -29,12 +57,13 @@ function Dashboard() {
           </div>
         </div>
         <nav className="mt-8">
-          <SidebarItem icon={<Home size={20} />} text="Dashboard" isOpen={isSidebarOpen} />
-          <SidebarItem icon={<Ticket size={20} />} text="My Tickets" isOpen={isSidebarOpen} />
-          <SidebarItem icon={<Calendar size={20} />} text="Events" isOpen={isSidebarOpen} />
-          <SidebarItem icon={<Heart size={20} />} text="Wishlist" isOpen={isSidebarOpen} />
-          <SidebarItem icon={<Settings size={20} />} text="Settings" isOpen={isSidebarOpen} />
-          <SidebarItem icon={<LogOut size={20} />} text="Logout" isOpen={isSidebarOpen} />
+          <SidebarItem icon={<Home size={20} />} text="Dashboard" isOpen={isSidebarOpen} path = "/dashboard" />
+          <SidebarItem icon={<Ticket size={20} />} text="My Tickets" isOpen={isSidebarOpen} path = "/" />
+          <SidebarItem icon={<Calendar size={20} />} text="Events" isOpen={isSidebarOpen} path = "/create"/>
+          <SidebarItem icon={<Heart size={20} />} text="Wishlist" isOpen={isSidebarOpen} path = "/"/>
+          <SidebarItem icon={<Settings size={20} />} text="Settings" isOpen={isSidebarOpen} path = "/"/>
+          <SidebarItem icon={<LogOut size={20} />} text="Logout" isOpen={isSidebarOpen} path = "/logout" />
+
         </nav>
       </div>
 
@@ -59,11 +88,18 @@ function Dashboard() {
               </button>
               <div className="flex items-center space-x-2">
                 <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  src={userData?.avatar || "https://via.placeholder.com/32"}
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
-                <span className="font-medium text-gray-700">TestUser</span>
+                <div className="flex flex-col">
+                  <span className="font-medium text-gray-700">
+                    {userData ? userData.username : 'Loading...'}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {userData ? userData.email : ''}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -102,15 +138,16 @@ function Dashboard() {
   );
 }
 
-function SidebarItem({ icon, text, isOpen }) {
+function SidebarItem({ icon, text, isOpen, path }) {
+  const navigate = useNavigate();
   return (
-    <a
-      href="#"
+    <div
+      onClick={() => navigate(path)}
       className="flex items-center px-4 py-3 text-gray-300 hover:bg-indigo-800 hover:text-white transition-colors"
     >
       <span className="inline-flex">{icon}</span>
       {isOpen && <span className="ml-3">{text}</span>}
-    </a>
+    </div>
   );
 }
 

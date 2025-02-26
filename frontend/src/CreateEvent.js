@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { 
   Calendar, 
@@ -22,13 +22,21 @@ const EventForm = () => {
     venue: '',
     price: '',
     totalTickets: '',
+    userId: '',
   });
 
   const [statusMessage, setStatusMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData) {
+      setEventData({ ...eventData, userId: userData._id });
+    }
+  }, []);
   const handleChange = (e) => {
+
     const { name, value } = e.target;
     setEventData({ ...eventData, [name]: value });
   };
@@ -57,6 +65,7 @@ const EventForm = () => {
           venue: '',
           price: '',
           totalTickets: '',
+          userId: '',
         });
       }
     } catch (error) {
