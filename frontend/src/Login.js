@@ -144,6 +144,27 @@ const Login = () => {
                 Sign up
               </a>
             </div>
+
+            {/* Admin Login Link */}
+            <div className="mt-4 text-center">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">
+                    Administrator Access
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/admin/login')}
+                className="mt-4 w-full flex justify-center py-2 px-4 border border-indigo-600 rounded-lg text-indigo-600 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors text-sm font-medium"
+              >
+                Login as Administrator
+              </button>
+            </div>
           </form>
         </div>
       </div>

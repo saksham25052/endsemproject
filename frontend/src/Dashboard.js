@@ -20,6 +20,7 @@ function Dashboard() {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -42,6 +43,24 @@ function Dashboard() {
     };
 
     fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get('http://localhost:3000/api/events', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setEvents(response.data);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
   }, []);
 
   return (
@@ -88,9 +107,13 @@ function Dashboard() {
               </button>
               <div className="flex items-center space-x-2">
                 <img
-                  src={userData?.avatar || "https://via.placeholder.com/32"}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full"
+                  src={userData?.avatar || "/default-avatar.svg"}
+                  alt={userData?.username || "Profile"}
+                  className="w-8 h-8 rounded-full bg-indigo-600 text-white"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E";
+                  }}
                 />
                 <div className="flex flex-col">
                   <span className="font-medium text-gray-700">
@@ -109,28 +132,19 @@ function Dashboard() {
         <main className="p-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Upcoming Events</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Event Cards */}
-            <EventCard
-              image="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=2400&q=80"
-              title="Malhar 2025"
-              date="June 15, 2025"
-              location="First Quad"
-              price="Free"
-            />
-            <EventCard
-              image="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-1.2.1&auto=format&fit=crop&w=2400&q=80"
-              title="Zeitgeist"
-              date="July 10, 2025"
-              location="XIMR Auditorium"
-              price="Rs. 200"
-            />
-            <EventCard
-              image="https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=2400&q=80"
-              title="Stand-up Comedy Night"
-              date="May 25, 2025"
-              location="College Hall"
-              price="Rs. 500"
-            />
+            {events.map((event) => (
+              <EventCard
+                key={event._id}
+                eventId={event._id}  // Add this line
+                image={event.image}
+                title={event.title}
+                date={new Date(event.date).toLocaleDateString()}
+                time={event.time}
+                location={event.venue}
+                price={`Rs. ${event.price}`}
+                availableTickets={event.availableTickets}
+              />
+            ))}
           </div>
         </main>
       </div>
@@ -151,20 +165,55 @@ function SidebarItem({ icon, text, isOpen, path }) {
   );
 }
 
-function EventCard({ image, title, date, location, price }) {
+function EventCard({ image, title, date, time, location, price, availableTickets, eventId }) {
+  const navigate = useNavigate();
+
+  const handleBooking = () => {
+    navigate(`/book/${eventId}`);
+  };
+
+  // Default event image URL - you can replace this with your own default image
+  const defaultEventImage = "https://images.unsplash.com/photo-1531058020387-3be344556be6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80";
+
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-      <img src={image} alt={title} className="w-full h-48 object-cover" />
+      <div className="relative h-48">
+        <img 
+          src={image?.url || defaultEventImage} 
+          alt={image?.altText || `${title} event`}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            console.log('Image failed to load:', e.target.src);
+            e.target.onerror = null; // Prevent infinite loop
+            e.target.src = defaultEventImage;
+          }}
+        />
+        {!image?.url && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <span className="text-white text-sm">No image available</span>
+          </div>
+        )}
+      </div>
+      {/* Rest of the card content remains the same */}
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
         <div className="mt-2 text-sm text-gray-600">
-          <p>{date}</p>
+          <p>{date} at {time}</p>
           <p>{location}</p>
+          <p className="text-sm text-gray-500">Available Tickets: {availableTickets}</p>
         </div>
         <div className="mt-4 flex items-center justify-between">
           <span className="text-lg font-bold text-indigo-600">{price}</span>
-          <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-            Book Now
+          <button 
+            onClick={handleBooking}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              availableTickets > 0 
+                ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            disabled={availableTickets === 0}
+          >
+            {availableTickets > 0 ? 'Book Now' : 'Sold Out'}
           </button>
         </div>
       </div>

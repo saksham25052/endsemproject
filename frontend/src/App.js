@@ -8,6 +8,10 @@ import CreateEvent from './CreateEvent';
 import PrivateRoute from './PrivateRoute';
 import { LogOut } from 'lucide-react';
 import LogoutComponent from './LogoutComponent';
+import AdminDashboard from './AdminDashboard';
+import AdminRoute from './AdminRoute';
+import AdminLogin from './AdminLogin';
+import BookingPage from './BookingPage';
 
 function App() {
   return (
@@ -53,9 +57,28 @@ function App() {
           } 
         />
 
+        {/* Admin Route */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route 
+          path="/admin" 
+          element={
+            <PrivateRoute>
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/book/:eventId" 
+          element={
+            <PrivateRoute>
+              <BookingPage />
+            </PrivateRoute>
+          } 
+        />
       </Routes>
     </Router>
-
   );
 }
 

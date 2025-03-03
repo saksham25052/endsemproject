@@ -38,10 +38,23 @@ const eventSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  image: {
+    url: {
+      type: String,
+      default: 'https://via.placeholder.com/400x200'  // Default image if none provided
+    },
+    publicId: {
+      type: String  // For Cloudinary public ID
+    },
+    altText: {
+      type: String,
+      default: 'Event image'
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now,
-  },
+  }
 });
 
 const Event = mongoose.model('Event', eventSchema);
