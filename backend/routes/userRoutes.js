@@ -34,10 +34,33 @@ router.post('/register', async (req, res) => {
     await user.save();
 
     mailTransport().sendMail({
-      subject: 'Account verification',
-      html: `<h1>Verification code: ${verificationCode}</h1>`, 
       from: 'countmein25052@gmail.com',
       to: email,
+      subject: 'Verify Your CountMeIn Account',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
+          <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h1 style="color: #4f46e5; text-align: center; margin-bottom: 30px;"> CountMeIn! 🎟️</h1>
+            
+            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h2 style="color: #1f2937; margin-top: 0; margin-bottom: 20px;">Verification Code:</h2>
+              <div style="background-color: #eef2ff; padding: 15px; border-radius: 6px; text-align: center;">
+                <span style="font-size: 32px; font-weight: bold; color: #4f46e5; letter-spacing: 4px;">${verificationCode}</span>
+              </div>
+            </div>
+
+            <div style="text-align: center; color: #4b5563; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+              <p style="margin-bottom: 10px;">Please enter this code to verify your account.</p>
+              <p style="margin: 0;">This code will expire in 10 minutes.</p>
+            </div>
+
+            <div style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 30px;">
+              <p style="margin: 5px 0;">If you didn't request this verification code, please ignore this email.</p>
+              <p style="margin: 5px 0;">© ${new Date().getFullYear()} CountMeIn. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      `
     });
 
    

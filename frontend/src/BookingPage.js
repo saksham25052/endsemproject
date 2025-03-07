@@ -65,12 +65,15 @@ const BookingPage = () => {
           totalAmount: event.price * ticketCount
         },
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
       );
 
       setIsSuccess(true);
-      setStatusMessage('Booking successful!');
+      setStatusMessage(response.data.message);
       setTimeout(() => {
         navigate('/dashboard');
       }, 2000);

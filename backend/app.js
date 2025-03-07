@@ -22,9 +22,11 @@ mongoose.connect(process.env.MONGO_URI, {
 const userRoutes = require('./routes/userRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 app.use('/api/users', userRoutes); // Use the user route
 app.use('/api/events', eventRoutes); //Use events route
 app.use('/api/admin', adminRoutes); //Use the admin route
+app.use('/api/bookings', bookingRoutes); // Use the booking route
 
 
 // Start server
